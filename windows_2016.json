@@ -17,13 +17,14 @@
         "./scripts/disable-winrm.ps1",
         "./scripts/enable-winrm.ps1",
         "./scripts/microsoft-updates.bat",
-        "./scripts/win-updates.ps1"
+        "./scripts/win-updates.ps1",
+        "./scripts/packerShutdown.bat"
       ],
       "communicator":"winrm",
       "winrm_username": "vagrant",
       "winrm_password": "vagrant",
-      "winrm_timeout" : "4h",
-      "shutdown_command": "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\"",
+      "winrm_timeout" : "8h",
+      "shutdown_command": "{{user `shutdown_command`}}",
       "ram_size": 2048,
       "cpu": 2,
       "switch_name":"{{user `hyperv_switchname`}}",
@@ -35,12 +36,12 @@
       "iso_url": "{{user `iso_url`}}",
       "iso_checksum_type": "{{user `iso_checksum_type`}}",
       "iso_checksum": "{{user `iso_checksum`}}",
-      "headless": false,
+      "headless": true,
       "boot_wait": "2m",
       "winrm_username": "vagrant",
       "winrm_password": "vagrant",
-      "winrm_timeout": "6h",
-      "shutdown_command": "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\"",
+      "winrm_timeout": "8h",
+      "shutdown_command": "{{user `shutdown_command`}}",
       "guest_os_type": "windows9srv-64",
       "disk_size": 61440,
       "vnc_port_min": 5900,
@@ -54,7 +55,8 @@
         "./scripts/disable-winrm.ps1",
         "./scripts/enable-winrm.ps1",
         "./scripts/microsoft-updates.bat",
-        "./scripts/win-updates.ps1"
+        "./scripts/win-updates.ps1",
+        "./scripts/packerShutdown.bat"
       ],
       "vmx_data": {
         "RemoteDisplay.vnc.enabled": "false",
@@ -70,12 +72,12 @@
       "iso_url": "{{user `iso_url`}}",
       "iso_checksum_type": "{{user `iso_checksum_type`}}",
       "iso_checksum": "{{user `iso_checksum`}}",
-      "headless": false,
+      "headless": true,
       "boot_wait": "2m",
       "winrm_username": "vagrant",
       "winrm_password": "vagrant",
-      "winrm_timeout": "6h",
-      "shutdown_command": "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\"",
+      "winrm_timeout": "8h",
+      "shutdown_command": "{{user `shutdown_command`}}",
       "guest_os_type": "Windows2012_64",
       "guest_additions_mode": "disable",
       "disk_size": 61440,
@@ -88,7 +90,8 @@
         "./scripts/enable-winrm.ps1",
         "./scripts/microsoft-updates.bat",
         "./scripts/win-updates.ps1",
-        "./scripts/oracle-cert.cer"
+        "./scripts/oracle-cert.cer",
+        "./scripts/packerShutdown.bat"
       ],
       "vboxmanage": [
         [
@@ -104,12 +107,57 @@
           "2"
         ]
       ]
+    },
+    {
+      "type": "parallels-iso",
+      "iso_url": "{{user `iso_url`}}",
+      "iso_checksum_type": "{{user `iso_checksum_type`}}",
+      "iso_checksum": "{{user `iso_checksum`}}",
+      "boot_wait": "2m",
+      "communicator": "winrm",
+      "winrm_username": "vagrant",
+      "winrm_password": "vagrant",
+      "winrm_timeout": "8h",
+      "shutdown_command": "{{user `shutdown_command`}}",
+      "guest_os_type": "win-2012",
+      "parallels_tools_flavor": "win",
+      "disk_size": 61440,
+      "floppy_files": [
+        "{{user `autounattend`}}",
+        "./scripts/microsoft-updates.bat",
+        "./scripts/win-updates.ps1",
+        "./scripts/enable-winrm.ps1",
+        "./scripts/openssh.ps1",
+        "./scripts/packerShutdown.bat"
+      ],
+      "prlctl": [
+        [
+          "set", "{{.Name}}",
+          "--memsize", "2048"
+        ],
+        [
+          "set", "{{.Name}}",
+          "--cpus", "2"
+        ],
+        [
+          "set", "{{.Name}}",
+          "--winsystray-in-macmenu", "off"
+        ],
+        [
+          "set", "{{.Name}}",
+          "--startup-view", "window"
+        ],
+        [
+          "set", "{{.Name}}",
+          "--efi-boot", "off"
+        ]
+      ]
     }
   ],
   "provisioners": [
     {
       "type": "windows-shell",
-      "execute_command": "{{ .Vars }} cmd /c \"{{ .Path }}\"",
+      "remote_path": "C:/Windows/Temp/script.bat",
       "scripts": [
         "./scripts/vm-guest-tools.bat",
         "./scripts/enable-rdp.bat"
@@ -126,7 +174,7 @@
     },
     {
       "type": "windows-shell",
-      "execute_command": "{{ .Vars }} cmd /c \"{{ .Path }}\"",
+      "remote_path": "C:/Windows/Temp/script.bat",
       "scripts": [
         "./scripts/pin-powershell.bat",
         "./scripts/set-winrm-automatic.bat",
@@ -149,6 +197,7 @@
     "iso_checksum_type": "md5",
     "iso_checksum": "70721288BBCDFE3239D8F8C0FAE55F1F",
     "autounattend": "./answer_files/2016/Autounattend.xml",
-    "hyperv_switchname": "{{env `hyperv_switchname`}}"
+    "hyperv_switchname": "{{env `hyperv_switchname`}}",
+    "shutdown_command": "A:/packerShutdown.bat"
   }
 }

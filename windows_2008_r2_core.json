@@ -63,12 +63,6 @@
         "./scripts/disable-auto-logon.bat",
         "./scripts/compact.bat"
       ]
-    },
-    {
-      "type": "shell",
-      "inline": [
-        "rm -rf /tmp/*"
-      ]
     }
   ],
   "post-processors": [
