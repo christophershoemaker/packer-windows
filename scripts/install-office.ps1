@@ -1,0 +1,1 @@
+ cd d: ; Start-Process D:/setup.exe -NoNewWindow -Wait
